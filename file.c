@@ -313,6 +313,11 @@ int readin(char *fname, int lockfl)
 	}
 	if (s == FIOERR || s == FIOFNF)	/* False if error.      */
 		return FALSE;
+
+	/* add to recent files if successfully read */
+	if (s == FIOSUC || s == FIOEOF)
+		add_recent_file(fname);
+
 	return TRUE;
 }
 

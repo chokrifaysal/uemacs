@@ -91,6 +91,10 @@ extern int justflag;		/* justify, don't fill */
 extern int overlap;		/* line overlap in forw/back page */
 extern int scrollcount;		/* number of lines to scroll */
 
+/* Recent files tracking */
+extern char recent_files[NRECENT][NFILEN];
+extern int recent_count;
+
 /* Uninitialized global external declarations. */
 
 extern int currow;		/* Cursor row                   */

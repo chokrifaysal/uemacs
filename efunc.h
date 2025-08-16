@@ -105,6 +105,8 @@ extern int ovstring(int f, int n);
 /* main.c */
 extern void edinit(char *bname);
 extern void show_start_page(void);
+extern void add_recent_file(char *fname);
+extern int show_recent_files(int f, int n);
 extern int execute(int c, int f, int n);
 extern int quickexit(int f, int n);
 extern int quit(int f, int n);

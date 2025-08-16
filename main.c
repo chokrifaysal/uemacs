@@ -883,6 +883,113 @@ void show_start_page(void)
 	curwp->w_flag |= WFHARD;
 }
 
+/*
+ * add_recent_file()
+ *
+ * Add a file to the recent files list
+ */
+void add_recent_file(char *fname)
+{
+	int i, j;
+
+	/* don't add empty filenames */
+	if (fname == NULL || fname[0] == 0)
+		return;
+
+	/* check if file is already in the list */
+	for (i = 0; i < recent_count; i++) {
+		if (strcmp(recent_files[i], fname) == 0) {
+			/* move it to the front */
+			for (j = i; j > 0; j--) {
+				strcpy(recent_files[j], recent_files[j-1]);
+			}
+			strcpy(recent_files[0], fname);
+			return;
+		}
+	}
+
+	/* shift existing files down */
+	for (i = (recent_count < NRECENT ? recent_count : NRECENT-1); i > 0; i--) {
+		strcpy(recent_files[i], recent_files[i-1]);
+	}
+
+	/* add new file at the front */
+	strcpy(recent_files[0], fname);
+	if (recent_count < NRECENT)
+		recent_count++;
+}
+
+/*
+ * show_recent_files()
+ *
+ * Display recent files and let user select one
+ */
+int show_recent_files(int f, int n)
+{
+	struct buffer *bp;
+	struct window *wp;
+	char line[NSTRING];
+	int i;
+
+	/* debug message to confirm function is called */
+	mlwrite("Recent files function called, count: %d", recent_count);
+
+	if (recent_count == 0) {
+		mlwrite("No recent files");
+		return FALSE;
+	}
+
+	/* get buffer for recent files list */
+	bp = bfind("*Recent Files*", TRUE, BFINVS);
+	if (bp == NULL || bclear(bp) == FALSE) {
+		mlwrite("Cannot display recent files");
+		return FALSE;
+	}
+
+	/* switch to the buffer */
+	if (--curbp->b_nwnd == 0) {
+		curbp->b_dotp = curwp->w_dotp;
+		curbp->b_doto = curwp->w_doto;
+		curbp->b_markp = curwp->w_markp;
+		curbp->b_marko = curwp->w_marko;
+	}
+
+	curbp = bp;
+	bp->b_mode = 0;
+	bp->b_nwnd++;
+	wp = curwp;
+	wp->w_bufp = bp;
+	wp->w_linep = bp->b_linep;
+	wp->w_flag = WFHARD | WFFORCE;
+	wp->w_dotp = bp->b_dotp;
+	wp->w_doto = bp->b_doto;
+	wp->w_markp = NULL;
+	wp->w_marko = 0;
+
+	/* build the list */
+	linstr("Recent Files:");
+	lnewline();
+	linstr("=============");
+	lnewline();
+	lnewline();
+
+	for (i = 0; i < recent_count; i++) {
+		snprintf(line, sizeof(line), "%2d. %.100s", i+1, recent_files[i]);
+		linstr(line);
+		lnewline();
+	}
+
+	lnewline();
+	linstr("Press number key to open file, or any other key to cancel");
+
+	/* position cursor at top */
+	curwp->w_dotp = lforw(curbp->b_linep);
+	curwp->w_doto = 0;
+	curwp->w_flag |= WFHARD;
+
+	return TRUE;
+}
+
 /*	On some primitave operation systems, and when emacs is used as
 	a subprogram to a larger project, emacs needs to de-alloc its
 	own used memory

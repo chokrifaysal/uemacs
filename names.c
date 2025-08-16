@@ -194,6 +194,7 @@ struct name_bind names[] = {
 	{"set-fill-column", setfillcol},
 	{"set-mark", setmark},
 	{"shell-command", spawn},
+	{"show-recent-files", show_recent_files},
 	{"shrink-window", shrinkwind},
 	{"split-current-window", splitwind},
 	{"store-macro", storemac},

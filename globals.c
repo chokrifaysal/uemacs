@@ -35,6 +35,10 @@ int mpresf = FALSE;		/* TRUE if message in last line */
 int clexec = FALSE;		/* command line execution flag  */
 int mstore = FALSE;		/* storing text to macro flag   */
 int discmd = TRUE;		/* display command flag         */
+
+/* Recent files tracking */
+char recent_files[NRECENT][NFILEN];	/* array of recent file names */
+int recent_count = 0;			/* number of recent files */
 int disinp = TRUE;		/* display input characters     */
 struct buffer *bstore = NULL;	/* buffer to store macro text to */
 int vtrow = 0;			/* Row location of SW cursor */
