@@ -61,6 +61,7 @@
 #include "efunc.h"   /* Function declarations and name table. */
 #include "ebind.h"   /* Default key bindings. */
 #include "version.h"
+#include "line.h"    /* Line manipulation functions. */
 
 /* For MSDOS, increase the default stack space. */
 #if MSDOS & TURBO
@@ -282,8 +283,13 @@ int main(int argc, char **argv)
 	if (firstfile == FALSE && (gflags & GFREAD)) {
 		swbuffer(firstbp);
 		zotbuf(bp);
-	} else
+	} else {
 		bp->b_mode |= gmode;
+		/* show start page if no files were loaded */
+		if (firstfile == TRUE) {
+			show_start_page();
+		}
+	}
 
 	/* Deal with startup gotos and searches */
 	if (gotoflag && searchflag) {
@@ -809,6 +815,73 @@ dspram()
 }
 #endif
 #endif
+
+/*
+ * show_start_page()
+ *
+ * Display the start page with credits and basic information
+ */
+void show_start_page(void)
+{
+	char welcome_text[256];
+
+	/* clear the current buffer */
+	bclear(curbp);
+
+	/* add welcome header */
+	linstr("===============================================");
+	lnewline();
+	sprintf(welcome_text, "    Welcome to uEmacs/PK %s", VERSION);
+	linstr(welcome_text);
+	lnewline();
+	linstr("===============================================");
+	lnewline();
+	lnewline();
+
+	/* add credits section */
+	linstr("CREDITS:");
+	lnewline();
+	linstr("--------");
+	lnewline();
+	linstr("  Original Emacs concept and implementation");
+	lnewline();
+	linstr("  MicroEMACS by Dave G. Conroy and Daniel M. Lawrence");
+	lnewline();
+	linstr("  uEmacs/PK enhancements by Petri H. Kutvonen");
+	lnewline();
+	linstr("  Linux kernel creator's version maintained by Linus Torvalds");
+	lnewline();
+	linstr("  This fork developed by CHOKRI Faysal");
+	lnewline();
+	lnewline();
+
+	/* add basic usage info */
+	linstr("BASIC COMMANDS:");
+	lnewline();
+	linstr("---------------");
+	lnewline();
+	linstr("  Ctrl-X Ctrl-F    Open file");
+	lnewline();
+	linstr("  Ctrl-X Ctrl-S    Save file");
+	lnewline();
+	linstr("  Ctrl-X Ctrl-C    Exit editor");
+	lnewline();
+	linstr("  Ctrl-G           Cancel command");
+	lnewline();
+	linstr("  Ctrl-H           Show help");
+	lnewline();
+	lnewline();
+
+	/* add final message */
+	linstr("Press Ctrl-X Ctrl-F to open a file or Ctrl-H for help.");
+	lnewline();
+	linstr("Happy editing!");
+
+	/* position cursor at top */
+	curwp->w_dotp = lforw(curbp->b_linep);
+	curwp->w_doto = 0;
+	curwp->w_flag |= WFHARD;
+}
 
 /*	On some primitave operation systems, and when emacs is used as
 	a subprogram to a larger project, emacs needs to de-alloc its

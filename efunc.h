@@ -104,6 +104,7 @@ extern int ovstring(int f, int n);
 
 /* main.c */
 extern void edinit(char *bname);
+extern void show_start_page(void);
 extern int execute(int c, int f, int n);
 extern int quickexit(int f, int n);
 extern int quit(int f, int n);
