@@ -182,6 +182,8 @@ struct key_tab keytab[NBINDS] = {
 	{CTLX | 'S', fisearch}
 	,
 #endif
+	{CTLX | 'T', show_recent_files}
+	,
 	{CTLX | 'W', resize}
 	,
 	{CTLX | 'X', nextbuffer}
